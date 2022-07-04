@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&family=Overpass:wght@500&display=swap');
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    font-family: "Josefin Sans", "comic sans";
+}
+
+html{
+    height: 100vh;
+}
+body{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #57886C;
+}
+
+
+.indicators{
+    /*background-color: aquamarine;*/
+    display: flex;
+    justify-content: space-around;
+    margin: 5px 0;
+}
+
+input{
+    text-align: center;
+    font-size: 4rem;
+    height: 90px;
+    width: 120px;
+    padding-top: .150em;
+    background-color: #81A684;
+    border: none;
+    border-radius: .1em;
+
+}
+input:invalid{
+    outline: 5px solid red;
+}
+
+.buttons{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.buttons > *{
+    width: 60px;
+}
+.buttons > *:hover{
+    cursor: pointer;
+}
+
+.time-section{
+    display: flex;
+    font-size: 3rem;
+    align-items: center;
+    color: rgba(0, 0, 0, 0.233);
+}
+
+.currentlyStarted{
+    background-color: rgba(255, 255, 255, 0.808);
+    position: absolute;
+    top: 50px;
+    border-radius: .1em;
+    outline: 3px solid #81A684;
+    padding: 1em 2em;
+    animation: themsg 1200ms ease-in-out forwards reverse;
+}
+
+@keyframes themsg{
+    0%{
+        opacity: 100%;
+
+    }100%{
+        opacity: 0;
+        transform: translateY(200px);
+    }
+}
+
+footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    cursor: not-allowed;
+}
+svg{
+    margin-right: .5em;
+    border-radius: 1em;
+}
+svg:hover{
+    background-color: rgba(255, 255, 255, 0.363);
+}
