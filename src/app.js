@@ -1,13 +1,18 @@
 const inputs = document.querySelectorAll("input")
 const body = document.querySelector("body")
+const timeSection = document.querySelector(".time-section")
 
 const startBtn = document.querySelector(".start")
 const resetBtn = document.querySelector(".reset")
 const stopBtn = document.querySelector(".stop")
+const allButtons = document.querySelectorAll("button")
 
 let emptyInput = true;
 let idinter;
+let idIntervalToby;
 let holderStopBtn = 0;
+let stopState = false;
+const endSound = new Audio("assets/toby.mp3")
 
 const checkTimeInput = () => {
 
@@ -49,17 +54,73 @@ inputs.forEach(input =>{
     input.addEventListener("input", checkTimeInput)
 })
 
-const startEvent = () => {
-    if (emptyInput == true) {
-        if(inputs[0].value != "" || inputs[1].value != "" || inputs[2].value != ""){
-            let h = parseInt(inputs[0].value)
-            let m = parseInt(inputs[1].value)
-            let s = parseInt(inputs[2].value)
-            reduce(h, m, s)
-            
-            emptyInput = false;
-        }
 
+const tobyFoxBehaviour = () =>{
+    if(!stopState){
+        let currentTimeArray = []
+        idIntervalToby = setInterval(() => {
+            let allowHolder = 0;
+            inputs.forEach(input =>{
+               if(input.value == ""){
+                ++allowHolder
+                currentTimeArray.push(0)
+               }else{ currentTimeArray.push(parseInt(input.value))}
+            })
+    
+            if(currentTimeArray[0] == 0 && currentTimeArray[1] == 0 && currentTimeArray[2] == 0){
+                emptyInput = true
+                endSound.play()
+                let tobyFox = document.createElement("img")
+                tobyFox.setAttribute("src", "assets/Annoying_Dog.webp")
+                tobyFox.classList.add("toby")
+                timeSection.appendChild(tobyFox)
+                clearInterval(idIntervalToby)
+    
+                allButtons.forEach(btn =>{ btn.disabled = true })
+    
+                let intervalHolder = 0;
+                let sussy = setInterval(() => {
+                    if(intervalHolder == 0){
+                        inputs.forEach(input =>{
+                            input.style.cssText = "color:black"
+                            intervalHolder = 1;
+                        })
+                    }else if(intervalHolder == 1){
+                        inputs.forEach(input =>{
+                            input.style.cssText = "color:#2B7229"
+                            intervalHolder = 0;
+                        })
+                    }
+                }, 500);
+    
+    
+                setTimeout(() => {
+                    timeSection.removeChild(tobyFox)
+                    clearInterval(sussy)
+                    allButtons.forEach(btn =>{ btn.disabled = false })
+                }, 4000);
+            }else if(allowHolder > 1){
+                clearInterval(idIntervalToby)
+            }
+    
+            currentTimeArray = []
+        }, 1000);
+    }
+}
+
+const startEvent = () => {
+
+    if (emptyInput == true) {
+
+        let timeInput = []
+        inputs.forEach(input =>{
+            input.value == "" ? timeInput.push(0) : timeInput.push(parseInt(input.value))
+        })
+
+        reduce(timeInput)
+        emptyInput = false;
+        timeInput[0] == 0 && timeInput[1] == 0 && timeInput[2] == 0 ? emptyInput = true : false
+        
     } else if (emptyInput == false) {
         let alertMsg = document.createElement("div")
         alertMsg.innerText = "Click 'reset' to start a new pomodoro"
@@ -67,11 +128,9 @@ const startEvent = () => {
         body.appendChild(alertMsg)
         emptyInput = "standBy"
     }
-
-
 }
 
-const reduce = (h, m, s) =>{
+const reduce = ([h, m, s]) =>{
 
     idinter = setInterval(() => {
         if((h != 0) || (m != 0) || (s != 0)){
@@ -88,14 +147,11 @@ const reduce = (h, m, s) =>{
                     let holder = m
                     --m
                     s = 60
-                    if(holder != m){
-                        inputs[1].value = m
-                        //reduce()
-                        
-                        if(inputs[2].value == 0){
+                    setTimeout(() => {
+                        if(holder != m){
+                            inputs[1].value = m
                         }
-                        
-                    }
+                    }, 1000);
                 }
 
                 if(h > 0 && m == 0 && s == 0){
@@ -119,26 +175,39 @@ const reduce = (h, m, s) =>{
 }
 
 
+inputs.forEach(input =>{
+    input.addEventListener("click", e =>{
 
-
+        inputs.forEach(input =>{
+            input.value == "" ? input.value = 0 : false
+        })
+        input.value = ""
+    })
+})
 
 
 const stopEvent = () =>{
     if(holderStopBtn == 0){
+        clearInterval(idIntervalToby)
         clearInterval(idinter)
         stopBtn.innerText = "Resume"
         holderStopBtn = 1;
+        stopState = true
+        
 
     }else if(holderStopBtn == 1){
         
-        let h = parseInt(inputs[0].value)
-        let m = parseInt(inputs[1].value)
-        let s = parseInt(inputs[2].value)
+        let timeInput = []
+        inputs.forEach(input =>{
+            input.value == "" ? timeInput.push(0) : timeInput.push(parseInt(input.value))
+        })
 
-        reduce(h, m, s)
+        stopState = false
+        tobyFoxBehaviour()
+
+        reduce(timeInput)
         stopBtn.innerText = "Stop"
         holderStopBtn = 0
-            
     }
     emptyInput = false
 }
@@ -157,11 +226,10 @@ const resetEvent = () => {
     clearInterval(idinter)
 }
 
-startBtn.addEventListener("click", startEvent)
+startBtn.addEventListener("click", () =>{
+    startEvent()
+    tobyFoxBehaviour()
+})
 resetBtn.addEventListener("click", resetEvent)
 stopBtn.addEventListener("click", stopEvent)
 
-
-const countDown = (timeInput) => {
-
-}
