@@ -54,7 +54,6 @@ inputs.forEach(input =>{
     input.addEventListener("input", checkTimeInput)
 })
 
-
 const tobyFoxBehaviour = () =>{
     if(!stopState){
         let currentTimeArray = []
@@ -103,7 +102,7 @@ const tobyFoxBehaviour = () =>{
                 clearInterval(idIntervalToby)
             }
     
-            currentTimeArray = []
+            currentTimeArray = [];
         }, 1000);
     }
 }
