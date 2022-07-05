@@ -12,10 +12,31 @@ let idinter;
 let idIntervalToby;
 let holderStopBtn = 0;
 let stopState = false;
+let allowToStart = false;
+
 const endSound = new Audio("assets/toby.mp3")
 
-const checkTimeInput = () => {
+const checkEmptyEntry = () =>{
+    let newArray = []
+    inputs.forEach(input =>{
+        newArray.push(input.value)
+    })
 
+    let boolean = newArray.some((value) =>{
+        return value == ""
+    })
+
+    if(boolean == true || (newArray[0] == 0 && newArray[1] == 0 && newArray[2] == 0)){
+        allButtons.forEach(btn =>{ btn.disabled = true })
+    }else{
+        allButtons.forEach(btn =>{ btn.disabled = false })
+    }
+}
+
+body.addEventListener("click", checkEmptyEntry)
+
+const checkTimeInput = () => {
+    
     let newArray = [inputs[0].value, inputs[1].value, inputs[2].value]
     let fixedArray = []
 
@@ -25,10 +46,10 @@ const checkTimeInput = () => {
         let holder = 0;
         for(let i = 0; i < value.length; ++i){
             let char = value.charAt(i)
-
+            
             allNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
             coincidence = allNumbers.find(element => element == char)
-
+            
             if(holder == 0 && coincidence != undefined){
                 acum += coincidence
             }else if(coincidence == undefined){
@@ -43,7 +64,7 @@ const checkTimeInput = () => {
         }else if(fixedArray[2] > 60){
             fixedArray[2] = 60
         }
-
+        
     })
     for(let i = 0; i < 3; ++i){
         inputs[i].value = fixedArray[i]
@@ -51,7 +72,10 @@ const checkTimeInput = () => {
 }
 
 inputs.forEach(input =>{
-    input.addEventListener("input", checkTimeInput)
+    input.addEventListener("input", () =>{
+        checkTimeInput()
+        checkEmptyEntry()
+    })
 })
 
 const tobyFoxBehaviour = () =>{
@@ -60,13 +84,14 @@ const tobyFoxBehaviour = () =>{
         idIntervalToby = setInterval(() => {
             let allowHolder = 0;
             inputs.forEach(input =>{
-               if(input.value == ""){
-                ++allowHolder
+                if(input.value == ""){
+                    ++allowHolder
                 currentTimeArray.push(0)
                }else{ currentTimeArray.push(parseInt(input.value))}
             })
     
-            if(currentTimeArray[0] == 0 && currentTimeArray[1] == 0 && currentTimeArray[2] == 0){
+            if(currentTimeArray[0] == 0 && currentTimeArray[1] == 0 && currentTimeArray[2] == 0
+                && allowHolder < 2){
                 emptyInput = true
                 endSound.play()
                 let tobyFox = document.createElement("img")
@@ -104,6 +129,8 @@ const tobyFoxBehaviour = () =>{
     
             currentTimeArray = [];
         }, 1000);
+    }else{
+
     }
 }
 
@@ -176,6 +203,7 @@ const reduce = ([h, m, s]) =>{
 
 inputs.forEach(input =>{
     input.addEventListener("click", e =>{
+        checkEmptyEntry()
 
         inputs.forEach(input =>{
             input.value == "" ? input.value = 0 : false
