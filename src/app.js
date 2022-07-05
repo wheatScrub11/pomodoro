@@ -137,7 +137,7 @@ const tobyFoxBehaviour = () =>{
 }
 
 const startEvent = () => {
-    setTimeout(() => { startBtn.disabled = true }, 10); // crea conflicto con checkempyinput
+    setTimeout(() => { startBtn.disabled = true }, 10);
     
     let timeInput = []
     inputs.forEach(input =>{
@@ -257,6 +257,7 @@ const resetEvent = () => {
     stopBtn.innerText = "Stop"
     holderStopBtn = 0
     clearInterval(idinter)
+    stopState = false
 }
 
 startBtn.addEventListener("click", () =>{
