@@ -10,6 +10,7 @@ const allButtons = document.querySelectorAll("button")
 let emptyInput = true;
 let idinter;
 let idIntervalToby;
+let idBlockStartOnStopEvent;
 let holderStopBtn = 0;
 let stopState = false;
 let allowToStart = false;
@@ -30,16 +31,16 @@ const checkEmptyEntry = () =>{
         allButtons.forEach(btn =>{ btn.disabled = true })
     }else{
         allButtons.forEach(btn =>{ btn.disabled = false })
+        stopState ? startBtn.disabled = true : false
     }
 }
 
-body.addEventListener("click", checkEmptyEntry)
 
 const checkTimeInput = () => {
     
     let newArray = [inputs[0].value, inputs[1].value, inputs[2].value]
     let fixedArray = []
-
+    
     newArray.forEach(value =>{
         let acum = ""
         let coincidence
@@ -86,22 +87,22 @@ const tobyFoxBehaviour = () =>{
             inputs.forEach(input =>{
                 if(input.value == ""){
                     ++allowHolder
-                currentTimeArray.push(0)
-               }else{ currentTimeArray.push(parseInt(input.value))}
+                    currentTimeArray.push(0)
+                }else{ currentTimeArray.push(parseInt(input.value))}
             })
-    
+            
             if(currentTimeArray[0] == 0 && currentTimeArray[1] == 0 && currentTimeArray[2] == 0
                 && allowHolder < 2){
-                emptyInput = true
-                endSound.play()
-                let tobyFox = document.createElement("img")
-                tobyFox.setAttribute("src", "assets/Annoying_Dog.webp")
-                tobyFox.classList.add("toby")
-                timeSection.appendChild(tobyFox)
+                    emptyInput = true
+                    endSound.play()
+                    let tobyFox = document.createElement("img")
+                    tobyFox.setAttribute("src", "assets/Annoying_Dog.webp")
+                    tobyFox.classList.add("toby")
+                    timeSection.appendChild(tobyFox)
                 clearInterval(idIntervalToby)
     
                 allButtons.forEach(btn =>{ btn.disabled = true })
-    
+                
                 let intervalHolder = 0;
                 let sussy = setInterval(() => {
                     if(intervalHolder == 0){
@@ -116,44 +117,51 @@ const tobyFoxBehaviour = () =>{
                         })
                     }
                 }, 500);
-    
+                
     
                 setTimeout(() => {
                     timeSection.removeChild(tobyFox)
                     clearInterval(sussy)
                     allButtons.forEach(btn =>{ btn.disabled = false })
+                    checkEmptyEntry()
                 }, 4000);
             }else if(allowHolder > 1){
                 clearInterval(idIntervalToby)
             }
-    
+            
             currentTimeArray = [];
         }, 1000);
     }else{
-
+        
     }
 }
 
 const startEvent = () => {
-
-    if (emptyInput == true) {
-
-        let timeInput = []
-        inputs.forEach(input =>{
-            input.value == "" ? timeInput.push(0) : timeInput.push(parseInt(input.value))
-        })
-
-        reduce(timeInput)
-        emptyInput = false;
-        timeInput[0] == 0 && timeInput[1] == 0 && timeInput[2] == 0 ? emptyInput = true : false
+    setTimeout(() => { startBtn.disabled = true }, 10); // crea conflicto con checkempyinput
+    
+    let timeInput = []
+    inputs.forEach(input =>{
+        input.value == "" ? timeInput.push(0) : timeInput.push(parseInt(input.value))
+    })
+    
+    reduce(timeInput) 
+    emptyInput = false;
+    
+    //ad message
+    let alertMsg = document.createElement("div")
+    alertMsg.innerText = "Click 'reset' to start a new pomodoro"
+    alertMsg.classList.add("currentlyStarted")
+    body.appendChild(alertMsg)
+    emptyInput = "standBy"
+    
+    setTimeout(() => {
+        alertMsg.classList.add("disappear")
+    }, 1500);
+    setTimeout(() => {
+        body.removeChild(alertMsg)
+    }, 6000);
         
-    } else if (emptyInput == false) {
-        let alertMsg = document.createElement("div")
-        alertMsg.innerText = "Click 'reset' to start a new pomodoro"
-        alertMsg.classList.add("currentlyStarted")
-        body.appendChild(alertMsg)
-        emptyInput = "standBy"
-    }
+    
 }
 
 const reduce = ([h, m, s]) =>{
@@ -168,7 +176,7 @@ const reduce = ([h, m, s]) =>{
                         inputs[2].value = s
                     }
                 }
-
+                
                 if(m > 0 && s == 0){
                     let holder = m
                     --m
@@ -179,13 +187,13 @@ const reduce = ([h, m, s]) =>{
                         }
                     }, 1000);
                 }
-
+                
                 if(h > 0 && m == 0 && s == 0){
                     let holder = h
                     --h
                     m = 60
                     setTimeout(() => {
-        
+                        
                         if(holder != h){
                             inputs[0].value = h
                             inputs[1].value = 59
@@ -204,14 +212,13 @@ const reduce = ([h, m, s]) =>{
 inputs.forEach(input =>{
     input.addEventListener("click", e =>{
         checkEmptyEntry()
-
+        
         inputs.forEach(input =>{
             input.value == "" ? input.value = 0 : false
         })
         input.value = ""
     })
 })
-
 
 const stopEvent = () =>{
     if(holderStopBtn == 0){
@@ -221,14 +228,14 @@ const stopEvent = () =>{
         holderStopBtn = 1;
         stopState = true
         
-
+        
     }else if(holderStopBtn == 1){
         
         let timeInput = []
         inputs.forEach(input =>{
             input.value == "" ? timeInput.push(0) : timeInput.push(parseInt(input.value))
         })
-
+        
         stopState = false
         tobyFoxBehaviour()
 
@@ -236,6 +243,7 @@ const stopEvent = () =>{
         stopBtn.innerText = "Stop"
         holderStopBtn = 0
     }
+    setTimeout(() => { startBtn.disabled = true }, 10)
     emptyInput = false
 }
 
@@ -243,9 +251,7 @@ const resetEvent = () => {
     inputs.forEach(input => {
         input.value = ""
     })
-
-    let appendedErrorMessage = document.querySelector(".currentlyStarted")
-    appendedErrorMessage != null ? body.removeChild(appendedErrorMessage) : false
+    
     emptyInput = true
 
     stopBtn.innerText = "Stop"
@@ -259,4 +265,5 @@ startBtn.addEventListener("click", () =>{
 })
 resetBtn.addEventListener("click", resetEvent)
 stopBtn.addEventListener("click", stopEvent)
+body.addEventListener("click", checkEmptyEntry)
 

@@ -74,11 +74,13 @@ input:invalid{
 .currentlyStarted{
     background-color: rgba(255, 255, 255, 0.808);
     position: absolute;
-    top: 50px;
+    top: 120px;
     border-radius: .1em;
     outline: 3px solid #81A684;
     padding: 1em 2em;
     animation: themsg 1200ms ease-in-out forwards reverse;
+    font-size: 1.1rem;
+    font-weight: 1000;
 }
 
 @keyframes themsg{
@@ -123,5 +125,19 @@ svg:hover{
 @keyframes tobyfox {
     100%{
         transform: translateY(-90px);  
+    }
+}
+
+.disappear{
+    animation: disappear 1s linear 3s forwards;
+}
+
+@keyframes disappear {
+    0%{
+
+    }
+    100%{
+        transform: translateY(-90px);
+        opacity: 0;
     }
 }
