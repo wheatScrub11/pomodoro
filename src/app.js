@@ -268,3 +268,6 @@ resetBtn.addEventListener("click", resetEvent)
 stopBtn.addEventListener("click", stopEvent)
 body.addEventListener("click", checkEmptyEntry)
 
+
+
+
